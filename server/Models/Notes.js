@@ -3,24 +3,24 @@ const mongoose = require("mongoose");
 const notesSchema  = mongoose.Schema({
     fileName:{
         type:String,
-        require:true,
+        required:true,
     },
     fileDescription:{
         type:String,
-        require:true,
+        required:true,
     },
     tags:{
-        type:String,
-        require:true,
+        type:[String],
+        required:true,
     },
     files:{
         type:String,
-        require:true,
+        required:true,
     },
     uploadedBy:{
-        type:mongoose.Schema.Types.objectId,
+        type:mongoose.Schema.Types.ObjectId,
         ref:'User',
-        require:true,
+        required:true,
     },
 });
 

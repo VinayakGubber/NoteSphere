@@ -5,6 +5,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 
 const authRoutes = require("./Routes/auth"); //provides with the route of auth...
+const noteRoutes = require("./Routes/notes"); //provides with the route of notes...
 
 const app = express();
 const PORT = 7088;
@@ -27,6 +28,7 @@ app.get("/",(req,res)=>{
 });
 
 app.use("/auth",authRoutes);
+app.use("/notes",noteRoutes);
 
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);

@@ -2,36 +2,19 @@ const express = require("express");
 const dotenv = require("dotenv");
 const User = require("../Models/User");
 const bcrypt = require("bcrypt");
-const multer = require("multer");
-const cloudinary = require("cloudinary").v2; // Use cloudinary.v2
+const cloudinary = require("cloudinary").v2;
+const fs = require("fs"); // ✅ Required to delete local files after upload
 
 dotenv.config();
 
-const router = express.Router();
-
-// Multer Storage (Memory Storage)
-const storage = multer.memoryStorage();
-const upload = multer({ storage: storage });
-
-// Signup route
 const signup = async (req, res) => {
   try {
-    const {
-      firstName,
-      lastName,
-      userBio,
-      userEmail,
-      userMobile,
-      userName,
-      userPassword,
-    } = req.body;
+    const { firstName, lastName, userBio, userEmail, userMobile, userName, userPassword } = req.body;
 
     // Check if user already exists
     const existingUser = await User.findOne({ userEmail });
     if (existingUser) {
-      return res
-        .status(401)
-        .json({ error: "User already exists with this email address" });
+      return res.status(401).json({ error: "User already exists with this email address" });
     }
 
     // Check if file is provided
@@ -39,17 +22,11 @@ const signup = async (req, res) => {
       return res.status(400).json({ error: "Please upload a profile image" });
     }
 
-    // Upload file to Cloudinary using upload_stream()
-    const result = await new Promise((resolve, reject) => {
-      const stream = cloudinary.uploader.upload_stream(
-        { resource_type: "image" },
-        (error, result) => {
-          if (error) return reject(error);
-          resolve(result);
-        }
-      );
-      stream.end(req.file.buffer); // Use file buffer, not req.file.path
-    });
+    // ✅ Upload file to Cloudinary from disk storage
+    const result = await cloudinary.uploader.upload(req.file.path, { resource_type: "image" });
+
+    // ✅ Delete the local file after successful upload
+    fs.unlinkSync(req.file.path);
 
     console.log("Cloudinary Upload Result:", result);
 
@@ -66,7 +43,7 @@ const signup = async (req, res) => {
       userMobile,
       userName,
       userPassword: encryptedPassword,
-      profileImage: result.secure_url, // Save image URL from Cloudinary
+      profileImage: result.secure_url, // ✅ Store Cloudinary URL
     });
 
     await newUser.save();
@@ -80,7 +57,7 @@ const signup = async (req, res) => {
   }
 };
 
-//Login route
+// Login route (no changes)
 const login = async (req, res) => {
   try {
       const { userEmail, userPassword } = req.body;
@@ -93,15 +70,14 @@ const login = async (req, res) => {
           if (passwordMatch) {
               return res.json(user);
           } else {
-              return res.json({ status: "Error", getUser: false })
+              return res.json({ status: "Error", getUser: false });
           }
       } else {
           return res.json({ status: "Error", getUser: false });
       }
-
   } catch (error) {
       res.status(400).json({ error: error.message });
   }
 };
 
-module.exports = { signup,login };
+module.exports = { signup, login };
