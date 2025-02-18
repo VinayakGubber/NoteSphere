@@ -1,17 +1,19 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { FaSearch } from "react-icons/fa";
+import { FiSearch } from "react-icons/fi";
 import { FiUpload } from "react-icons/fi";
+import { GiHamburgerMenu } from "react-icons/gi";
 
 const Navbar = () => {
   return (
     <header className="flex h-[80px] items-center justify-center">
-      <div className="flex w-full max-w-[1550px] items-center justify-between lg:mx-5">
+      <div className="flex w-full max-w-[1550px] items-center justify-between">
         {/* Image Section */}
         <div className="flex h-[60px] w-[120px] items-center justify-center overflow-hidden ">
           <img src="/LOGO.png" alt="LOGO" className="" />
         </div>
         {/* Nav links */}
+        <GiHamburgerMenu className="text-xl md:hidden" />
         {/* <ul className="flex items-center justify-center gap-4">
           <li className="font-semibold">
             <Link to="/">Home</Link>
@@ -26,7 +28,7 @@ const Navbar = () => {
             <Link to="/signup">Signup</Link>
           </li>
         </ul> */}
-        <div className="flex items-center justify-center gap-4">
+        <div className="hidden md:flex md:items-center md:justify-center md:gap-4">
           <Link to={"/"}>Home</Link>
           <Link to={"/"}>About</Link>
           {/* <Link to={"/login"}>
@@ -40,7 +42,7 @@ const Navbar = () => {
             </button>
           </Link> */}
           <Link to={"/search"}>
-            <FaSearch className="text-[24px]" />
+            <FiSearch />
           </Link>
           <Link to={"/upload"}>
             <FiUpload />
