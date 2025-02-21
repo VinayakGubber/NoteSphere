@@ -36,13 +36,11 @@ const Footer = () => {
           </h2>
           <ul className="text-gray-600">
             <li className="mb-1">
-              <Link to="/about">+91 99879 90097</Link>
+              <Link to="/about">+91 82773 05907</Link>
             </li>
+
             <li className="mb-1">
-              <Link to="/faq">+91 97649 35361</Link>
-            </li>
-            <li className="mb-1">
-              <Link to="/faq">notesphere@gmail.com</Link>
+              <Link to="/faq">gubbervinayak@gmail.com</Link>
             </li>
           </ul>
         </div>

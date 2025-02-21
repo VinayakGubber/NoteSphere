@@ -6,11 +6,14 @@ import { GiHamburgerMenu } from "react-icons/gi";
 
 const Navbar = () => {
   return (
-    <header className="flex h-[80px] items-center justify-center">
+    <header className="flex h-[80px] items-center justify-center shadow-md">
       <div className="flex w-full max-w-[1550px] items-center justify-between">
         {/* Image Section */}
-        <div className="flex h-[60px] w-[120px] items-center justify-center overflow-hidden ">
-          <img src="/LOGO.png" alt="LOGO" className="" />
+        <div className="mx-2 flex h-[60px] w-[120px] items-center justify-center overflow-hidden ">
+          <Link to={"/"}>
+            {" "}
+            <img src="/NoteSphereLogo.jpg" alt="LOGO" className="" />
+          </Link>
         </div>
         {/* Nav links */}
         <GiHamburgerMenu className="text-xl md:hidden" />
@@ -19,7 +22,7 @@ const Navbar = () => {
             <Link to="/">Home</Link>
           </li>
           <li className="font-semibold">
-            <Link to="/about">About</Link>
+            <Link to="/About">About</Link>
           </li>
           <li className="rounded-xl bg-blue-500 px-5 py-2 font-semibold">
             <Link to="/login">Login</Link>
@@ -30,7 +33,7 @@ const Navbar = () => {
         </ul> */}
         <div className="hidden md:flex md:items-center md:justify-center md:gap-4">
           <Link to={"/"}>Home</Link>
-          <Link to={"/"}>About</Link>
+          <Link to={"/About"}>About</Link>
           {/* <Link to={"/login"}>
             <button className="rounded-xl bg-blue-600 px-5 py-2 font-semibold hover:bg-blue-700">
               Login
