@@ -9,6 +9,9 @@ export default {
       backgroundImage: {
         unsplashBgImage: "url('/img/bgImg.jpg')",
       },
+      aboutImage:{
+        
+      }
     },
   },
   plugins: [],
