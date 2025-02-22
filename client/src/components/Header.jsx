@@ -33,7 +33,7 @@ const Navbar = () => {
         </ul> */}
         <div className="hidden md:flex md:items-center md:justify-center md:gap-4">
           <Link to={"/"}>Home</Link>
-          <Link to={"/About"}>About</Link>
+          <Link to={"/about"}>About</Link>
           {/* <Link to={"/login"}>
             <button className="rounded-xl bg-blue-600 px-5 py-2 font-semibold hover:bg-blue-700">
               Login

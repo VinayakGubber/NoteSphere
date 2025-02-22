@@ -35,13 +35,9 @@ const Footer = () => {
             Contact Info
           </h2>
           <ul className="text-gray-600">
-            <li className="mb-1">
-              <Link to="/about">+91 82773 05907</Link>
-            </li>
+            <li className="mb-1">+91 82773 05907</li>
 
-            <li className="mb-1">
-              <Link to="/faq">gubbervinayak@gmail.com</Link>
-            </li>
+            <li className="mb-1">gubbervinayak@gmail.com</li>
           </ul>
         </div>
       </div>

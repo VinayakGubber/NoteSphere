@@ -7,25 +7,25 @@ import About from "./pages/About";
 import Upload from "./pages/Upload";
 import Faq from "./pages/Faq";
 import Profile from "./pages/Profile";
+import Login from "./pages/Login";
+import SignUp from "./pages/SignUp"; // Ensure this file exists in `/pages/`
 
 const App = () => {
   return (
-    <>
-      <Router>
-        <Header />
-        <Routes>
-          <Route exact path="/" element={<Home />} />
-          <Route path="/search" element={<Search />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/upload" element={<Upload />} />
-          <Route path="/faq" element={<Faq />} />
-          <Route path="/profile" element={<Profile />} />
-
-          {/* <Route path="/login" element={<Home />} /> */}
-          {/* <Route path="/signup" element={<Home />} /> */}
-        </Routes>
-      </Router>
-    </>
+    <Router>
+      <Header />
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/search" element={<Search />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/upload" element={<Upload />} />
+        <Route path="/faq" element={<Faq />} />
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<SignUp />} />{" "}
+        {/* This will display the Sign-Up Page */}
+      </Routes>
+    </Router>
   );
 };
 
