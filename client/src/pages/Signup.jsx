@@ -1,173 +1,58 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
-import { FaUserPlus } from "react-icons/fa";
-import axios from "axios";
+import React from "react";
+import { FaSearch } from "react-icons/fa";
 
-const Signup = () => {
-  const [profilePreviewImage, setProfilePreviewImage] = useState("");
-  const [profileImage, setProfileImage] = useState("");
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [userMobile, setUserMobile] = useState("");
-  const [userBio, setUserBio] = useState("");
-  const [userEmail, setUserEmail] = useState("");
-  const [userName, setUserName] = useState("");
-  const [userPassword, setUserPassword] = useState("");
-  const [showEmailForm, setShowEmailForm] = useState(false);
-
+const SearchBar = () => {
   return (
-    <div className="relative flex min-h-screen items-center justify-center bg-gradient-to-br from-blue-900 via-gray-900 to-black">
-      <div className="absolute inset-0 bg-black bg-opacity-30 backdrop-blur-lg" />
-
-      <div className="relative z-10 w-full max-w-2xl rounded-xl bg-white bg-opacity-10 p-6 shadow-lg backdrop-blur-lg">
-        <h2 className="mb-6 text-center text-3xl font-bold text-white">
-          Sign Up
-        </h2>
-
-        {!showEmailForm ? (
-          <button
-            onClick={() => setShowEmailForm(true)}
-            className="mb-3 flex w-full items-center justify-center gap-2 rounded-lg bg-white bg-opacity-20 px-4 py-2 text-white hover:bg-opacity-30"
-          >
-            <FaUserPlus />
-            Sign up with Email
-          </button>
-        ) : (
-          <form className="space-y-4">
-            {/* Two-column layout for large screens */}
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <input
-                type="text"
-                placeholder="First Name"
-                className="input-box"
-                required
-              />
-              <input
-                type="text"
-                placeholder="Last Name"
-                className="input-box"
-                required
-              />
-              <input
-                type="text"
-                placeholder="Username"
-                className="input-box"
-                required
-              />
-              <input
-                type="email"
-                placeholder="Enter your email"
-                className="input-box"
-                required
-              />
-              <input
-                type="tel"
-                placeholder="Mobile Number"
-                className="input-box"
-                required
-              />
-              <input
-                type="password"
-                placeholder="Create a password"
-                className="input-box"
-                required
-              />
-            </div>
-
-            <textarea
-              placeholder="Short Bio"
-              className="input-box"
-              required
-            ></textarea>
-
-            {/* Profile Picture Upload */}
-            <div className="flex flex-col items-center">
-              <div className="profile-preview">
-                {profilePreviewImage === "" ? (
-                  <p className="text-sm font-bold text-gray-300">Profile</p>
-                ) : (
-                  <img
-                    src={profilePreviewImage}
-                    alt="Profile Preview"
-                    className="h-full w-full object-cover"
-                  />
-                )}
-              </div>
-
-              <label className="cursor-pointer text-sm font-semibold text-gray-300 hover:underline">
-                Upload Profile Picture
-                <input
-                  type="file"
-                  accept="image/png, image/jpeg"
-                  className="hidden"
-                  onChange={(e) => {
-                    setProfilePreviewImage(
-                      URL.createObjectURL(e.target.files[0]),
-                    );
-                    setProfileImage(e.target.files[0]);
-                  }}
-                  required
-                />
-              </label>
-            </div>
-
+    <div className="relative flex h-heightWithoutNavbar flex-col items-center justify-start bg-notesImage bg-cover bg-center p-4">
+      <div className="flex w-full items-center justify-center">
+        <form className="w-full max-w-[700px] rounded-xl border border-black bg-[#374151] p-4">
+          <div className="flex items-center justify-start">
+            {/* Search Icon */}
+            <FaSearch className="text-2xl text-white" />
+            {/* Input Field */}
+            <input
+              type="text"
+              placeholder="Search for notes"
+              className="ml-3 w-full bg-[#374151] text-white outline-none"
+            />
             <button
               type="submit"
-              className="w-full rounded-lg bg-white bg-opacity-20 px-4 py-2 text-white hover:bg-opacity-30"
+              className="rounded-lg bg-blue-700 px-4 py-2 text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300"
             >
-              Sign Up
+              Search
             </button>
-          </form>
-        )}
-
-        <p className="mt-5 text-center text-sm text-gray-300">
-          Already have an account?{" "}
-          <Link to="/login" className="text-white hover:underline">
-            Login
-          </Link>
-        </p>
+          </div>
+        </form>
       </div>
 
-      {/* Glassmorphism & Input Styles */}
-      <style>
-        {`
-          .input-box {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 8px;
-            background: rgba(255, 255, 255, 0.1);
-            color: white;
-            backdrop-filter: blur(10px);
-            transition: 0.3s;
-          }
+      {/* Notes Display Grid */}
+      <div className="mt-5 grid w-full grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        {Array(8)
+          .fill(true)
+          .map((_, i) => (
+            <div
+              key={i}
+              className="relative flex h-[200px] w-[160px] flex-col justify-between rounded-lg bg-notesImage bg-cover bg-center p-4 shadow-lg"
+            >
+              {/* Tag */}
+              <div className="absolute left-0 top-0 rounded-br-lg bg-red-500 px-2 py-1 text-xs font-bold text-white">
+                BCA sem 4
+              </div>
 
-          .input-box::placeholder {
-            color: rgba(255, 255, 255, 0.5);
-          }
+              {/* Title */}
+              <p className="mt-8 text-center text-sm font-semibold text-gray-800">
+                Introduction to C++
+              </p>
 
-          .input-box:focus {
-            border-color: white;
-            outline: none;
-            box-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
-          }
-
-          .profile-preview {
-            margin-bottom: 10px;
-            height: 100px;
-            width: 100px;
-            overflow: hidden;
-            border-radius: 50%;
-            border: 2px solid rgba(255, 255, 255, 0.2);
-            background: rgba(255, 255, 255, 0.1);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-          }
-        `}
-      </style>
+              {/* View Button */}
+              <button className="mt-auto w-full rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700">
+                View
+              </button>
+            </div>
+          ))}
+      </div>
     </div>
   );
 };
 
-export default Signup;
+export default SearchBar;
