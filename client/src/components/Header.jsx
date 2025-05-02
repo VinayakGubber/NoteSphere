@@ -1,65 +1,92 @@
 import React from "react";
-import { Link } from "react-router-dom";
-import { FiSearch } from "react-icons/fi";
-import { FiUpload } from "react-icons/fi";
+import { Link, useNavigate } from "react-router-dom";
+import { FiSearch, FiUpload } from "react-icons/fi";
 import { GiHamburgerMenu } from "react-icons/gi";
+import { useDispatch, useSelector } from "react-redux";
+import { removeUserData } from "../Redux/slices/user-slice";
 
 const Navbar = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const isAuthenticated = useSelector((state) => state.user.isAuthenticated);
+  const user = useSelector((state) => state.user.userData);
+
+  const handleLogout = () => {
+    dispatch(removeUserData());
+    navigate("/");
+  };
+
   return (
     <header className="flex h-[80px] items-center justify-center shadow-md">
-      <div className="flex w-full max-w-[1550px] items-center justify-between">
-        {/* Image Section */}
-        <div className="mx-2 flex h-[60px] w-[120px] items-center justify-center overflow-hidden ">
-          <Link to={"/"}>
-            {" "}
-            <img src="/NoteSphereLogo.jpg" alt="LOGO" className="" />
+      <div className="flex w-full max-w-[1550px] items-center justify-between px-3">
+        {/* Logo Section */}
+        <div className="mx-2 flex h-[60px] w-[120px] items-center justify-center overflow-hidden">
+          <Link to="/">
+            <img src="/NoteSphereLogo.jpg" alt="LOGO" />
           </Link>
         </div>
-        {/* Nav links */}
+
+        {/* Hamburger for mobile view */}
         <GiHamburgerMenu className="text-xl md:hidden" />
-        {/* <ul className="flex items-center justify-center gap-4">
-          <li className="font-semibold">
+
+        {/* Navigation Section */}
+        <div className="flex items-center justify-center gap-4">
+          <div className="font-semibold">
             <Link to="/">Home</Link>
-          </li>
-          <li className="font-semibold">
-            <Link to="/About">About</Link>
-          </li>
-          <li className="rounded-xl bg-blue-500 px-5 py-2 font-semibold">
-            <Link to="/login">Login</Link>
-          </li>
-          <li className="rounded-xl bg-blue-500 px-5 py-2 font-semibold">
-            <Link to="/signup">Signup</Link>
-          </li>
-        </ul> */}
-        <div className="hidden md:flex md:items-center md:justify-center md:gap-4">
-          <Link to={"/"}>Home</Link>
-          <Link to={"/about"}>About</Link>
-          {/* <Link to={"/login"}>
-            <button className="rounded-xl bg-blue-600 px-5 py-2 font-semibold hover:bg-blue-700">
-              Login
-            </button>
-          </Link>
-          <Link to={"/signup"}>
-            <button className="rounded-xl bg-blue-600 px-5 py-2 font-semibold  hover:bg-blue-700">
-              Signup
-            </button>
-          </Link> */}
-          <Link to={"/search"}>
-            <FiSearch />
-          </Link>
-          <Link to={"/upload"}>
-            <FiUpload />
-          </Link>
-          <Link to={"/profile"}>
-            <button className="rounded-xl bg-blue-600 px-5 py-2 font-semibold  hover:bg-blue-700">
-              Profile
-            </button>
-          </Link>
-          <Link to={"/logout"}>
-            <button className="rounded-xl bg-red-600 px-5 py-2 font-semibold  hover:bg-red-700">
-              Logout
-            </button>
-          </Link>
+          </div>
+          <div className="font-semibold">
+            <Link to="/about">About</Link>
+          </div>
+
+          {/* Conditional Rendering Based on Authentication */}
+          {isAuthenticated ? (
+            <>
+              <div>
+                <Link to="/search">
+                  <FiSearch className="text-xl" />
+                </Link>
+              </div>
+              <div>
+                <Link to="/upload">
+                  <FiUpload className="text-xl" />
+                </Link>
+              </div>
+              <Link
+                to="/profile"
+                className="mr-1 rounded-xl bg-blue-500 px-5 py-2 font-bold hover:bg-blue-600"
+              >
+                Profile
+              </Link>
+              <div>
+                <Link>
+                  <button
+                    className="rounded-xl bg-red-600 px-5 py-2 font-semibold text-white hover:bg-red-700"
+                    onClick={handleLogout}
+                  >
+                    Logout
+                  </button>
+                </Link>
+              </div>
+            </>
+          ) : (
+            <>
+              <div>
+                <Link to="/login">
+                  <button className="rounded-xl bg-blue-500 px-5 py-2 font-semibold text-white">
+                    Login
+                  </button>
+                </Link>
+              </div>
+              <div>
+                <Link to="/signup">
+                  <button className="rounded-xl bg-blue-500 px-5 py-2 font-semibold text-white">
+                    Signup
+                  </button>
+                </Link>
+              </div>
+            </>
+          )}
         </div>
       </div>
     </header>

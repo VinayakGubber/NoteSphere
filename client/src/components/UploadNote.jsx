@@ -1,8 +1,50 @@
-import React from "react";
+import React, { useState } from "react";
+import { useSelector } from "react-redux";
 
 const UploadNote = () => {
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [tags, setTags] = useState("");
+  const [files, setFiles] = useState("");
+
+  const user = useSelector((state) => state.user.userId);
+  const userId = user._id;
+
+  const SubmitFile = async (e) => {
+    try {
+      e.preventDefault();
+
+      const formData = new FormData(); // ✅ We create an object with identifier named formData
+      // ✅ In the below we append the KEY:VALUE pairs into it
+      formData.append("title", setTitle);
+      formData.append("description", setDescription);
+      formData.append("tags", setTags);
+      formData.append("files", setFiles);
+      formData.append("userId", userId);
+
+      console.log("");
+
+      const result = await axios.post(
+        "http://localhost:7088/notes/upload",
+        formData, // ✅ We post the formData object from above to the server
+        {
+          // ✅ This is to tell the server that the incoming data is in the form of key:value pairs where the value can be text or any file like a Profile image
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        },
+      );
+      alert("Notes uploaded Successfully");
+    } catch (error) {
+      console.log("Failed to submit file : ", error);
+    }
+  };
+
   return (
-    <div className="p-5lg:justify-center mx-auto flex h-full w-full flex-col items-center justify-start">
+    <form
+      onSubmit={SubmitFile}
+      className="p-5lg:justify-center mx-auto flex h-full w-full flex-col items-center justify-start"
+    >
       <div className="m-0 items-center pb-[2vh] text-center text-3xl font-bold text-[#094166]">
         Upload Your Notes
       </div>
@@ -14,6 +56,7 @@ const UploadNote = () => {
             type="text"
             placeholder="Title"
             required
+            onChange={(e) => setTitle(e.target.value)}
             className="block w-full rounded-lg border border-gray-300 bg-gray-50 px-4 py-2 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
           />
         </div>
@@ -26,6 +69,7 @@ const UploadNote = () => {
             type="text"
             placeholder="Description"
             required
+            onChange={(e) => setDescription(e.target.value)}
             className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
           />
         </div>
@@ -38,6 +82,7 @@ const UploadNote = () => {
             type="text"
             placeholder="Tags"
             required
+            onChange={(e) => setTags(e.target.value)}
             className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
           />
         </div>
@@ -47,6 +92,7 @@ const UploadNote = () => {
       <div className="flex w-full max-w-[90%] items-center justify-center sm:max-w-[550px]">
         <label
           htmlFor="dropzone-file"
+          onChange={(e) => setFiles(e.target.value)}
           className="flex h-64 w-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 hover:bg-gray-100"
         >
           <div className="flex flex-col items-center justify-center pb-6 pt-5">
@@ -87,7 +133,7 @@ const UploadNote = () => {
           Upload
         </button>
       </div>
-    </div>
+    </form>
   );
 };
 

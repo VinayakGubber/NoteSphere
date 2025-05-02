@@ -56,7 +56,7 @@ const getNote = async (req, res) => {
     }
     if (tag) {
       query.tag = {
-        $regex: tag,
+        $regex: tags,
         $options: "i",
       };
     }
@@ -70,7 +70,7 @@ const getNote = async (req, res) => {
 //Get Note By Id
 const getNoteById = async (req, res) => {
   try {
-    const userId = req.parmas.id;
+    const userId = req.params.id;
     console.log(userId);
 
     await Notes.find({

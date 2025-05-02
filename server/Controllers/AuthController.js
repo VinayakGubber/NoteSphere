@@ -9,12 +9,22 @@ dotenv.config();
 
 const signup = async (req, res) => {
   try {
-    const { firstName, lastName, userBio, userEmail, userMobile, userName, userPassword } = req.body;
+    const {
+      firstName,
+      lastName,
+      userBio,
+      userEmail,
+      userMobile,
+      userName,
+      userPassword,
+    } = req.body;
 
     // Check if user already exists
     const existingUser = await User.findOne({ userEmail });
     if (existingUser) {
-      return res.status(401).json({ error: "User already exists with this email address" });
+      return res
+        .status(401)
+        .json({ error: "User already exists with this email address" });
     }
 
     // Check if file is provided
@@ -23,7 +33,9 @@ const signup = async (req, res) => {
     }
 
     // ✅ Upload file to Cloudinary from disk storage
-    const result = await cloudinary.uploader.upload(req.file.path, { resource_type: "image" });
+    const result = await cloudinary.uploader.upload(req.file.path, {
+      resource_type: "image",
+    });
 
     // ✅ Delete the local file after successful upload
     fs.unlinkSync(req.file.path);
@@ -60,23 +72,26 @@ const signup = async (req, res) => {
 // Login route (no changes)
 const login = async (req, res) => {
   try {
-      const { userEmail, userPassword } = req.body;
-      console.log(userEmail);
+    const { userEmail, userPassword } = req.body;
+    console.log("Login attempt:", userEmail);
 
-      const user = await User.findOne({ userEmail });
+    // Check if user exists
+    const user = await User.findOne({ userEmail });
+    if (!user) {
+      return res.status(404).json({ error: "User not found" }); // ❌ Invalid email
+    }
 
-      if (user) {
-          const passwordMatch = await bcrypt.compare(userPassword, user.userPassword);
-          if (passwordMatch) {
-              return res.json(user);
-          } else {
-              return res.json({ status: "Error", getUser: false });
-          }
-      } else {
-          return res.json({ status: "Error", getUser: false });
-      }
+    // Compare passwords
+    const passwordMatch = await bcrypt.compare(userPassword, user.userPassword);
+    if (!passwordMatch) {
+      return res.status(401).json({ error: "Invalid password" }); // ❌ Incorrect password
+    }
+
+    // ✅ Successful login
+    return res.status(200).json(user);
   } catch (error) {
-      res.status(400).json({ error: error.message });
+    console.error("Login error:", error.message);
+    return res.status(500).json({ error: "Server error during login" });
   }
 };
 

@@ -8,24 +8,35 @@ import Upload from "./pages/Upload";
 import Faq from "./pages/Faq";
 import Profile from "./pages/Profile";
 import Login from "./pages/Login";
-import SignUp from "./pages/SignUp"; // Ensure this file exists in `/pages/`
+import SignUp from "./pages/SignUp";
+import { useSelector } from "react-redux";
 
 const App = () => {
+  const isAuthenticated = useSelector((state) => state.user.isAuthenticated);
+
   return (
-    <Router>
-      <Header />
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/search" element={<Search />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/upload" element={<Upload />} />
-        <Route path="/faq" element={<Faq />} />
-        <Route path="/profile" element={<Profile />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<SignUp />} />{" "}
-        {/* This will display the Sign-Up Page */}
-      </Routes>
-    </Router>
+    <>
+      <Router>
+        <Header />
+        <Routes>
+          <Route exact path="/" element={<Home />} />
+          {isAuthenticated ? (
+            <>
+              <Route path="/search" element={<Search />} />
+              <Route path="/upload" element={<Upload />} />
+              <Route path="/profile" element={<Profile />} />
+            </>
+          ) : (
+            <>
+              <Route path="/login" element={<Login />} />
+              <Route path="/signup" element={<SignUp />} />{" "}
+            </>
+          )}
+          <Route path="/about" element={<About />} />
+          <Route path="/faq" element={<Faq />} />
+        </Routes>
+      </Router>
+    </>
   );
 };
 

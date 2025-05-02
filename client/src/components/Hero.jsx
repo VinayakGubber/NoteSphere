@@ -15,7 +15,7 @@ const Hero = () => {
           lose an important note again!
         </p>
         <div className="mt-5 text-sm">
-          <div className="flex items-center justify-center gap-5">
+          {/* <div className="flex items-center justify-center gap-5">
             <Link to="/login">
               <button className="rounded-xl bg-white px-7 py-4 font-semibold text-blue-500">
                 Login
@@ -23,12 +23,13 @@ const Hero = () => {
             </Link>
             <Link to="/signup">
               {" "}
-              {/* Fixed Sign-Up Button Link */}
+               
               <button className="rounded-xl bg-white px-7 py-4 font-semibold text-blue-500">
                 Sign Up
               </button>
             </Link>
-          </div>
+            
+          </div> */}
         </div>
       </div>
     </div>

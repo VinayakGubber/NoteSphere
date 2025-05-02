@@ -1,16 +1,38 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { FaEnvelope } from "react-icons/fa";
+import { setUserData } from "../Redux/slices/user-slice";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const Login = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const [userEmail, setUserEmail] = useState("");
+  const [userPassword, setUserPassword] = useState("");
   const [showEmailForm, setShowEmailForm] = useState(false);
 
   // Handle Email Sign-In Form
-  const handleEmailSignIn = (e) => {
-    e.preventDefault();
-    alert(`Signed in with Email: ${email}\nPassword: ${password}`);
+  const loginUser = async (e) => {
+    try {
+      e.preventDefault();
+      const user = {
+        userEmail,
+        userPassword,
+      };
+      const result = await axios.post("http://localhost:7088/auth/login", user);
+      console.log("Login successfull :", result);
+
+      dispatch(setUserData(result.data));
+
+      navigate("/");
+    } catch (error) {
+      alert(
+        "Cannot login user: " + (error.response?.data?.error || error.message),
+      );
+    }
   };
 
   return (
@@ -32,21 +54,21 @@ const Login = () => {
             Login with Email
           </button>
         ) : (
-          <form onSubmit={handleEmailSignIn} className="space-y-4">
+          <form onSubmit={loginUser} className="space-y-4">
             <input
               type="email"
               placeholder="Enter your email"
               className="input-box"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              value={userEmail}
+              onChange={(e) => setUserEmail(e.target.value)}
               required
             />
             <input
               type="password"
               placeholder="Enter your password"
               className="input-box"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              value={userPassword}
+              onChange={(e) => setUserPassword(e.target.value)}
               required
             />
             <button
