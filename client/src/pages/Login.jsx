@@ -1,10 +1,9 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { FaEnvelope } from "react-icons/fa";
-import { setUserData } from "../Redux/slices/user-slice";
 import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { setUserData } from "../Redux/slices/user-slice";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -14,19 +13,18 @@ const Login = () => {
   const [userPassword, setUserPassword] = useState("");
   const [showEmailForm, setShowEmailForm] = useState(false);
 
-  // Handle Email Sign-In Form
   const loginUser = async (e) => {
+    e.preventDefault();
     try {
-      e.preventDefault();
       const user = {
         userEmail,
         userPassword,
       };
-      const result = await axios.post("http://localhost:7088/auth/login", user);
-      console.log("Login successfull :", result);
+
+      const result = await axios.post("http://localhost:2002/auth/login", user);
+      console.log("Login successful:", result);
 
       dispatch(setUserData(result.data));
-
       navigate("/");
     } catch (error) {
       alert(
@@ -44,7 +42,6 @@ const Login = () => {
           Login
         </h2>
 
-        {/* Email Login */}
         {!showEmailForm ? (
           <button
             onClick={() => setShowEmailForm(true)}
@@ -80,15 +77,24 @@ const Login = () => {
           </form>
         )}
 
-        <p className="mt-5 text-center text-sm text-gray-300">
-          Don't have an account?{" "}
-          <Link to="/signup" className="text-white hover:underline">
-            Sign Up
-          </Link>
-        </p>
+        {/* Conditional Footer Links */}
+        {!showEmailForm ? (
+          <p className="mt-5 text-center text-sm text-gray-300">
+            Don't have an account?{" "}
+            <Link to="/signup" className="text-white hover:underline">
+              Sign Up
+            </Link>
+          </p>
+        ) : (
+          <p className="mt-5 text-center text-sm text-gray-300">
+            <Link to="/forgot-password" className="text-white hover:underline">
+              Forgot Password?
+            </Link>
+          </p>
+        )}
       </div>
 
-      {/* Glassmorphism & Input Styles */}
+      {/* Styles for input boxes */}
       <style>
         {`
           .input-box {

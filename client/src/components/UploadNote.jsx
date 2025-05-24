@@ -1,139 +1,164 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { useSelector } from "react-redux";
+import axios from "axios";
 
 const UploadNote = () => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [tags, setTags] = useState("");
-  const [files, setFiles] = useState("");
+  const [file, setFile] = useState(null);
+  const [isDragging, setIsDragging] = useState(false);
 
-  const user = useSelector((state) => state.user.userId);
-  const userId = user._id;
+  const fileInputRef = useRef(null);
+  const user = useSelector((state) => state.user.userData);
+  const userId = user?._id;
 
-  const SubmitFile = async (e) => {
+  const submitFile = async (e) => {
+    e.preventDefault();
+    if (!file) {
+      alert("Please select a PDF file.");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("title", title);
+    formData.append("description", description);
+    formData.append("tags", tags);
+    formData.append("file", file);
+    formData.append("userId", userId);
+
     try {
-      e.preventDefault();
+      await axios.post("http://localhost:2002/notes/upload", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
 
-      const formData = new FormData(); // ✅ We create an object with identifier named formData
-      // ✅ In the below we append the KEY:VALUE pairs into it
-      formData.append("title", setTitle);
-      formData.append("description", setDescription);
-      formData.append("tags", setTags);
-      formData.append("files", setFiles);
-      formData.append("userId", userId);
+      alert("Notes uploaded successfully");
 
-      console.log("");
-
-      const result = await axios.post(
-        "http://localhost:7088/notes/upload",
-        formData, // ✅ We post the formData object from above to the server
-        {
-          // ✅ This is to tell the server that the incoming data is in the form of key:value pairs where the value can be text or any file like a Profile image
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        },
-      );
-      alert("Notes uploaded Successfully");
+      // ✅ Clear form
+      setTitle("");
+      setDescription("");
+      setTags("");
+      setFile(null);
     } catch (error) {
-      console.log("Failed to submit file : ", error);
+      console.error("Failed to upload:", error);
+      alert("Upload failed. Please try again.");
+    }
+  };
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = () => {
+    setIsDragging(false);
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    setIsDragging(false);
+    const droppedFile = e.dataTransfer.files[0];
+    if (droppedFile?.type === "application/pdf") {
+      setFile(droppedFile);
+    } else {
+      alert("Only PDF files are allowed.");
     }
   };
 
   return (
-    <form
-      onSubmit={SubmitFile}
-      className="p-5lg:justify-center mx-auto flex h-full w-full flex-col items-center justify-start"
-    >
-      <div className="m-0 items-center pb-[2vh] text-center text-3xl font-bold text-[#094166]">
-        Upload Your Notes
-      </div>
+    <div className="relative z-10 w-full max-w-xl rounded-xl bg-white bg-opacity-10 p-6 text-white shadow-lg backdrop-blur-lg">
+      <h2 className="mb-6 text-center text-3xl font-bold">Upload Notes</h2>
 
-      {/* Title Input */}
-      <div className="relative w-full max-w-[90%] sm:max-w-[550px]">
-        <div className="mb-5">
-          <input
-            type="text"
-            placeholder="Title"
-            required
-            onChange={(e) => setTitle(e.target.value)}
-            className="block w-full rounded-lg border border-gray-300 bg-gray-50 px-4 py-2 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
-          />
-        </div>
-      </div>
+      <form onSubmit={submitFile} className="space-y-4">
+        <input
+          type="text"
+          placeholder="Title"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          className="input-box"
+          required
+        />
+        <input
+          type="text"
+          placeholder="Description"
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          className="input-box"
+          required
+        />
+        <input
+          type="text"
+          placeholder="Tags (comma separated)"
+          value={tags}
+          onChange={(e) => setTags(e.target.value)}
+          className="input-box"
+          required
+        />
 
-      {/* Description Input */}
-      <div className="relative w-full max-w-[90%] sm:max-w-[550px]">
-        <div className="mb-5">
-          <input
-            type="text"
-            placeholder="Description"
-            required
-            onChange={(e) => setDescription(e.target.value)}
-            className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
-          />
-        </div>
-      </div>
-
-      {/* Tags Input */}
-      <div className="relative w-full max-w-[90%] sm:max-w-[550px]">
-        <div className="mb-5">
-          <input
-            type="text"
-            placeholder="Tags"
-            required
-            onChange={(e) => setTags(e.target.value)}
-            className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
-          />
-        </div>
-      </div>
-
-      {/* File Upload */}
-      <div className="flex w-full max-w-[90%] items-center justify-center sm:max-w-[550px]">
-        <label
-          htmlFor="dropzone-file"
-          onChange={(e) => setFiles(e.target.value)}
-          className="flex h-64 w-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 hover:bg-gray-100"
+        <div
+          className={`block w-full cursor-pointer rounded-lg border-2 border-dashed ${
+            isDragging ? "border-blue-300 bg-opacity-30" : "border-white"
+          } bg-white bg-opacity-10 px-4 py-6 text-center transition hover:bg-opacity-20`}
+          onDragOver={handleDragOver}
+          onDragLeave={handleDragLeave}
+          onDrop={handleDrop}
+          onClick={() => fileInputRef.current?.click()}
         >
-          <div className="flex flex-col items-center justify-center pb-6 pt-5">
-            <svg
-              className="mb-4 h-8 w-8 text-gray-500"
-              aria-hidden="true"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 20 16"
-            >
-              <path
-                stroke="currentColor"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
-              />
-            </svg>
-            <p className="mb-2 text-sm text-gray-500">
-              <span className="font-semibold">Click to Upload</span> or drag and
-              drop
-            </p>
-            <p className="text-xs text-gray-500">PDF</p>
-            <input
-              type="file"
-              accept="application/pdf"
-              required
-              id="dropzone-file"
-              className="hidden"
-            />
-          </div>
-        </label>
-      </div>
+          {file ? (
+            <p className="text-white">Selected: {file.name}</p>
+          ) : (
+            <>
+              <p className="font-semibold">Click or drag to upload a PDF</p>
+              <p className="mt-1 text-xs text-gray-300">
+                Only PDF files supported
+              </p>
+            </>
+          )}
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="application/pdf"
+            id="file-upload"
+            className="hidden"
+            onChange={(e) => setFile(e.target.files[0])}
+            required={!file}
+          />
+        </div>
 
-      {/* Upload Button - Moved Below Dropzone */}
-      <div className="mt-5 w-full max-w-[90%] sm:max-w-[550px]">
-        <button className="w-full rounded-xl bg-blue-600 px-5 py-2 font-semibold text-white hover:bg-blue-700">
+        <button
+          type="submit"
+          className="w-full rounded-lg bg-white bg-opacity-20 px-4 py-2 font-semibold text-white hover:bg-opacity-30"
+        >
           Upload
         </button>
-      </div>
-    </form>
+      </form>
+
+      {/* Styled input boxes */}
+      <style>
+        {`
+          .input-box {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            backdrop-filter: blur(10px);
+            transition: 0.3s;
+          }
+
+          .input-box::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+          }
+
+          .input-box:focus {
+            border-color: white;
+            outline: none;
+            box-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
+          }
+        `}
+      </style>
+    </div>
   );
 };
 

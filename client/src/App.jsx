@@ -8,35 +8,36 @@ import Upload from "./pages/Upload";
 import Faq from "./pages/Faq";
 import Profile from "./pages/Profile";
 import Login from "./pages/Login";
-import SignUp from "./pages/SignUp";
+import Signup from "./pages/Signup";
 import { useSelector } from "react-redux";
 
 const App = () => {
   const isAuthenticated = useSelector((state) => state.user.isAuthenticated);
 
   return (
-    <>
-      <Router>
-        <Header />
+    <Router>
+      <Header />
+
+      <div>
         <Routes>
           <Route exact path="/" element={<Home />} />
           {isAuthenticated ? (
             <>
-              <Route path="/search" element={<Search />} />
               <Route path="/upload" element={<Upload />} />
               <Route path="/profile" element={<Profile />} />
+              <Route path="/search" element={<Search />} />
             </>
           ) : (
             <>
+              <Route path="/signup" element={<Signup />} />
               <Route path="/login" element={<Login />} />
-              <Route path="/signup" element={<SignUp />} />{" "}
             </>
           )}
           <Route path="/about" element={<About />} />
           <Route path="/faq" element={<Faq />} />
         </Routes>
-      </Router>
-    </>
+      </div>
+    </Router >
   );
 };
 

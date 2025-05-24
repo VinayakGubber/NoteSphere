@@ -8,9 +8,6 @@ export default {
       },
       backgroundImage: {
         unsplashBgImage: "url('/img/bgImg.jpg')",
-        notesImage:
-          "linear-gradient(to right, rgb(252, 53, 76), rgb(10, 191, 188))",
-        // Ember Orange → Deep Orange → Brown → Charcoal Black
       },
     },
   },

@@ -1,36 +1,37 @@
-const dotenv = require("dotenv");
 const mongoose = require("mongoose");
+const dotenv = require("dotenv");
 const cors = require("cors");
 const express = require("express");
 const bodyParser = require("body-parser");
 
-const authRoutes = require("./Routes/auth"); //provides with the route of auth...
-const noteRoutes = require("./Routes/notes"); //provides with the route of notes...
+const authRoutes = require("./Routes/auth");
+const noteRoutes = require("./Routes/notes");
 
 const app = express();
-const PORT = 7088;
+const PORT = 2002;
 
 dotenv.config();
-app.use(cors()); 
+app.use(cors());
 app.use(bodyParser.json());
+app.use(express.json());
 
 
-//Checks the connection of MongoDb
 try {
     mongoose.connect(process.env.MONGO_URL);
-    console.log("Connected to MongoDB!");
-} catch(error) {
-    console.log(error);//
+    console.log("Connection Successfull");
+} catch (error) {
+    console.log(error);
 }
 
-app.get("/",(req,res)=>{
-    res.send("Server is running");
+app.get("/", (req, res) => {
+    res.send("Server Is Running");
 });
 
-app.use("/auth",authRoutes);
-app.use("/notes",noteRoutes);
+
+app.use("/auth", authRoutes);
+app.use("/notes", noteRoutes);
+app.use("/files", express.static("files"));
 
 app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
-});
-
+    console.log(`Server Running on Port ${PORT}`);
+})

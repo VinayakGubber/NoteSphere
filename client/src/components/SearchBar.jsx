@@ -33,8 +33,8 @@ const SearchBar = () => {
             .map((_, i) => (
               <div
                 key={i}
-                className="relative flex h-[250px] w-[220px] flex-col items-center justify-center rounded-lg 
-                           bg-notesImage p-5 shadow-lg"
+                className="bg-notesImage relative flex h-[250px] w-[220px] flex-col items-center justify-center 
+                           rounded-lg p-5 shadow-lg"
               >
                 {/* Tag */}
                 <div className="absolute left-0 top-0 rounded-br-lg bg-red-500 px-3 py-1 text-xs font-bold text-white">
