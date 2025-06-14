@@ -65,6 +65,8 @@ const UploadNote = () => {
     }
   };
 
+  
+
   return (
     <div className="relative z-10 w-full max-w-xl rounded-xl bg-white bg-opacity-10 p-6 text-white shadow-lg backdrop-blur-lg">
       <h2 className="mb-6 text-center text-3xl font-bold">Upload Notes</h2>
