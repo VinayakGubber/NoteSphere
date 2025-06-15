@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import { FaSearch } from "react-icons/fa";
 import axios from "axios";
 import { useSelector } from "react-redux";
+import useDebounceFn from "use-debounce-fn";
 
 const SearchBar = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -11,15 +12,20 @@ const SearchBar = () => {
   const user = useSelector((state) => state.user.userData);
   const username = user?.userName || "Unknown";
 
-  const handleSearch = async (e) => {
-    e.preventDefault();
+  const fetchNotes = useCallback(async (query) => {
+    if (!query.trim()) {
+      setSearchResults([]);
+      setSearchStatus("");
+      return;
+    }
 
     try {
       const res = await axios.get("http://localhost:2002/notes/getFiles", {
-        params: { title: searchQuery },
+        params: { title: query },
       });
 
       const data = res.data?.data || [];
+      // console.log("Fetched notes:", data);
 
       if (data.length > 0) {
         setSearchResults(data);
@@ -33,6 +39,15 @@ const SearchBar = () => {
       setSearchResults([]);
       setSearchStatus("not-found");
     }
+  }, []);
+
+  // Debounced version of fetchNotes
+  const debouncedSearch = useDebounceFn(fetchNotes, 500);
+
+  const handleInputChange = (e) => {
+    const value = e.target.value;
+    setSearchQuery(value);
+    debouncedSearch(value); // Debounced API call
   };
 
   const showPDF = (fileName) => {
@@ -44,7 +59,7 @@ const SearchBar = () => {
       {/* Search Bar */}
       <div className="flex w-full items-center justify-center">
         <form
-          onSubmit={handleSearch}
+          onSubmit={(e) => e.preventDefault()}
           className="w-full max-w-[700px] rounded-xl border border-gray-400 bg-gray-200 p-4 shadow-md"
         >
           <div className="flex items-center justify-start">
@@ -54,15 +69,9 @@ const SearchBar = () => {
               placeholder="Search for notes"
               className="ml-3 w-full bg-gray-200 text-gray-800 placeholder-gray-600 outline-none"
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              onChange={handleInputChange}
               required
             />
-            <button
-              type="submit"
-              className="ml-3 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300"
-            >
-              Search
-            </button>
           </div>
         </form>
       </div>
@@ -78,18 +87,18 @@ const SearchBar = () => {
                            rounded-lg p-5 shadow-lg text-white"
               >
                 <div className="absolute left-0 top-0 rounded-br-lg bg-red-500 px-3 py-1 text-xs font-bold text-white">
-                  {note.tags || "Note"}
+                  {note.fileName || "Note"}
                 </div>
                 <div className="relative flex flex-col items-center">
-                  <p className="text-center text-base font-semibold">
-                    {note.title || note.fileName}
-                  </p>
                   <p className="mt-1 text-center text-xs font-light text-gray-300">
                     Uploaded by <span className="font-semibold">{username}</span>
                   </p>
+                  <p className="mt-1 text-center text-xs font-light text-gray-300">
+                    tags : <span className="font-semibold"> {note.tags || "Null"}</span>
+                  </p>
                   <button
                     onClick={() => showPDF(note.files)}
-                    className="mt-4 w-full rounded-lg bg-white bg-opacity-20 px-5 py-2 text-sm font-medium text-white hover:bg-opacity-40"
+                    className="mt-4 w-full rounded-lg bg-gray-600 bg-opacity-20 px-5 py-2 text-sm font-medium text-black hover:bg-opacity-40"
                   >
                     View
                   </button>
